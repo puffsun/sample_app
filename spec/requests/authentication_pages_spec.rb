@@ -48,17 +48,40 @@ describe "Authentication" do
     describe "for non-signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
 
+      describe "when visiting settings page before signing in" do
+        before { visit edit_user_path(user) }
+        it { should have_selector('h1', text: 'Sign in') }
+        it { should have_selector('title', text: 'Sign in') }
+        it { should have_link("Sign in") }
+      end
+
+      describe "when visiting profile page before signing in" do
+        before { visit user_path(user) }
+        it { should have_selector('h1', text: 'Sign in') }
+        it { should have_selector('title', text: 'Sign in') }
+        it { should have_link('Sign in') }
+      end
+
       describe "when attempting to visit a protected page" do
         before do
           visit edit_user_path(user)
-          fill_in "Email", with: user.email
-          fill_in "Password", with: user.password
-          click_button "Sign in"
+          sign_in(user)
         end
 
         describe "after signing in" do
           it "should render the desired protected page" do
             page.should have_selector('title', text: 'Edit user')
+          end
+
+          describe "redirect to root if visit signup page" do
+            before { visit signup_path }
+            it { should have_selector('title', text: full_title("")) }
+          end
+
+          describe "when signing in again, should redirect to default page" do
+            before { sign_in(user) }
+
+            it { should have_selector('title', text: user.name) }
           end
         end
       end
@@ -80,6 +103,26 @@ describe "Authentication" do
         end
       end
 
+      describe "as admin user" do
+        let(:admin_user) { FactoryGirl.create(:user) }
+        before do
+          sign_in admin_user
+          delete user_path(admin_user)
+          # delete method not working here, see:
+          # http://stackoverflow.com/questions/10989427/rspec-test-destroy-method-rails-tutorial-3-2-ch-9-ex-10
+          #delete user_path(admin_user)
+        end
+
+        specify { response.should redirect_to(root_path) }
+=begin
+        it "redirect to root path", :js => true do
+          #execute_script("$.ajax({type:'DELETE',url:'/users/1'})")
+          should have_selector('title', full_title(""))
+          should have_selector('div.alert.alert-error')
+        end
+
+=end
+      end
       describe "as non-admin user" do
         let(:user) { FactoryGirl.create(:user) }
         let(:non_admin) { FactoryGirl.create(:user) }

@@ -4,18 +4,25 @@ class ApplicationController < ActionController::Base
 end
 
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update, :destroy]
+  before_filter :signed_in_user, only: [:index, :show, :edit, :update, :destroy]
   before_filter :correct_user, only: [:edit, :update]
   before_filter :admin_user, only: :destroy
+  before_filter :prevent_more_than_once_signup, only: [:new]
 
   def index
     @users = User.paginate(page: params[:page])
   end
 
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User destroyed."
-    redirect_to users_path
+    user = User.find(params[:id])
+    if user.admin?
+      flash[:error] = "Admin user cannot be destroyed."
+      redirect_to root_path
+    else
+      user.destroy
+      flash[:success] = "User destroyed."
+      redirect_to users_path
+    end
   end
 
   def show
@@ -66,5 +73,9 @@ class UsersController < ApplicationController
 
   def admin_user
     redirect_to(root_path) unless current_user.admin?
+  end
+
+  def prevent_more_than_once_signup
+    redirect_to(root_path) if current_user
   end
 end
