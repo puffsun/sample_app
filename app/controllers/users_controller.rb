@@ -76,6 +76,9 @@ class UsersController < ApplicationController
   end
 
   def prevent_more_than_once_signup
-    redirect_to(root_path) if current_user
+    if current_user
+      flash[:error] = "You cannot sign up twice."
+      redirect_to(root_path) 
+    end
   end
 end
