@@ -1,6 +1,18 @@
 
 module SessionsHelper
 
+  def signed_in_user
+    unless signed_in?
+      store_location
+      redirect_to signin_path, notice: "Please sign in."
+    end
+  end
+
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_path) unless current_user?(@user)
+  end
+
   def sign_in(user)
     cookies.permanent[:remember_token] = user.remember_token
     self.current_user = user
