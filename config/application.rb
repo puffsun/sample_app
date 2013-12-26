@@ -62,5 +62,8 @@ module SampleApp
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # get your assets to precompile on Heroku all you need to do is tell Rails to not initialize during precompile
+    config.assets.initialize_on_precompile = false
   end
 end
