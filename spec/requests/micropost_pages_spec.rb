@@ -24,6 +24,41 @@ describe "Micropost pages" do
         it "should create a micropost" do
           expect { click_button "Post" }.should change(Micropost, :count).by(1)
         end
+
+        describe "microposts count" do
+          before do
+            FactoryGirl.create(:micropost, user: user)
+            visit root_path
+          end
+          it { should have_content("1 micropost") }
+
+          describe "add one more micropost" do
+            before do
+              FactoryGirl.create(:micropost, user: user)
+              visit root_path
+            end
+            it { should have_content("2 microposts") }
+          end
+        end
+      end
+    end
+  end
+
+  describe "pagination" do
+    before { visit root_path }
+    before(:all) { 33.times { FactoryGirl.create(:micropost, user: user) } }
+    after(:all) { Micropost.delete_all }
+
+    let(:first_page) { Micropost.paginate(page:1) }
+    let(:second_page) { Micropost.paginate(page:2) }
+
+    it { should have_link("Next") }
+    it { should have_selector('div.pagination') }
+    its(:html) { should match('>2</a>') }
+
+    it "should list each micropost" do
+      Micropost.paginate(page: 1).each do |micropost|
+        page.should have_selector('li', text: micropost.content)
       end
     end
   end
@@ -35,7 +70,6 @@ describe "Micropost pages" do
       before { visit root_path }
 
       it { should have_link('delete') }
-      it { should have_content("1 micropost") }
       it "should delete a micropost" do
         expect { click_link "delete" }.should change(Micropost, :count).by(-1)
       end
