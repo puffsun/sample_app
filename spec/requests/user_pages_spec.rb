@@ -27,7 +27,7 @@ describe "User pages" do
 
       it "should list each user" do
         User.paginate(page: 1).each do |user|
-          page.should have_selector('li', text: user.name)
+          page.should have_selector('li', text: user.nickname)
         end
       end
     end
@@ -75,6 +75,7 @@ describe "User pages" do
       before do
         fill_in "Name", with: "Example User"
         fill_in "Email", with: "user@example.com"
+        fill_in "Nickname", with: "Nickname"
         fill_in "Password", with: "foobar"
         fill_in "Confirm Password", with: "foobar"
       end
@@ -87,7 +88,7 @@ describe "User pages" do
         before { click_button submit }
         let(:user) { User.find_by_email('user@example.com') }
 
-        it { should have_selector('title', text: user.name) }
+        it { should have_selector('title', text: user.nickname) }
         it { should have_selector('div.alert.alert-success', text: "Welcome") }
         it { should have_link('Sign out') }
       end
@@ -105,8 +106,8 @@ describe "User pages" do
       visit user_path(user)
     end
 
-    it { should have_selector('h1', text: user.name) }
-    it { should have_selector('title', text: user.name) }
+    it { should have_selector('h1', text: user.nickname) }
+    it { should have_selector('title', text: user.nickname) }
 
     describe "microposts" do
       it { should have_content(m1.content) }
@@ -210,16 +211,18 @@ describe "User pages" do
     describe "with valid information" do
       let(:new_name) { "New Name" }
       let(:new_email) { "new@example.com" }
+      let(:new_nickname) { "New Nickname" }
 
       before do
         fill_in "Name", with: new_name
         fill_in "Email", with: new_email
+        fill_in "Nickname", with: new_nickname
         fill_in "Password", with: user.password
         fill_in "Confirm Password", with: user.password
         click_button "Save changes"
       end
 
-      it { should have_selector('title', text: new_name) }
+      it { should have_selector('title', text: new_nickname) }
       it { should have_selector('div.alert.alert-success') }
       it { should have_link('Sign out', href: signout_path) }
       specify { user.reload.name.should == new_name }
