@@ -127,10 +127,24 @@ describe "User pages" do
           end.to change(user.followed_users, :count).by(1)
         end
 
+        describe "should increment correct follower count" do
+          before { click_button "Follow" }
+          it { should have_content("1 followers") }
+        end
+
+        describe "should increment correct following count" do
+          before do
+            click_button "Follow"
+            visit user_path(user)
+          end
+          it { should have_content("1 following") }
+        end
+
         it "should increment the other user's followers count" do
           expect do
             click_button "Follow"
           end.to change(other_user.followers, :count).by(1)
+          should have_content("1 followers")
         end
       end
 
@@ -156,6 +170,20 @@ describe "User pages" do
           before { click_button "Unfollow" }
           it { should have_selector('input', value: 'Follow') }
         end
+
+        describe "should have correct follower count" do
+          before { click_button "Unfollow" }
+          it { should have_content("0 followers") }
+        end
+
+        describe "should have correct following count" do
+          before do
+            click_button "Unfollow"
+            visit user_path(user)
+          end
+          it { should have_content("0 following") }
+        end
+
       end
     end
   end
