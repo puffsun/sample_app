@@ -1,8 +1,38 @@
 
+<% content_for :head do %>
+  <script type="text/javascript">
+
+  // how could I test keystroke with capybara
+  function updateCountdown() {
+    // 140 is the max message length
+    var counter = $("#counter");
+    var charsRemaining = 140 - jQuery("#micropost_content").val().length;
+    counter.text(pluralize_characters(charsRemaining) + " remainging.");
+    counter.css('color', (charsRemaining < 0) ? 'red': 'blue');
+  }
+
+  // just a function to pluralize the word "characters" based on the number
+  function pluralize_characters(num) {
+    if(num == 1) {
+      return num + " character";
+    } else {
+      return num + " characters";
+    }
+  }
+
+  jQuery(document).ready(function($) {
+    updateCountdown();
+    $("#micropost_content").keyup(updateCountdown);
+    $("#micropost_content").change(updateCountdown);
+  });
+  </script>
+<% end %>
+
 <%= form_for(@micropost) do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   <div class="field">
     <%= f.text_area :content, placeholder: "Compose new micropost..." %>
   </div>
+  <div id="counter" class="counter">140 characters remaining</div>
   <%= f.submit "Post", class: "btn btn-large btn-primary" %>
 <% end %>

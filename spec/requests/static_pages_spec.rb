@@ -46,7 +46,17 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
+=begin
+      describe "micropost character count lower than 140" do
+        before { fill_in "micropost_content", with: "abc" }
+        it { should have_content("137 characters remaining") }
+      end
 
+      describe "micropost character count higher than 140" do
+        before { fill_in "micropost_content", with: 'a' * 150 }
+        it { should have_content("-10 characters remaining") }
+      end
+=end
       describe "follower/following counts" do
         let(:other_user) { FactoryGirl.create(:user) }
         before do
