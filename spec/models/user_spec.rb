@@ -12,11 +12,12 @@
 require 'spec_helper'
 
 describe User do
-  before { @user = User.new(name: "Example User", email: "user@example.com",
+  before { @user = User.new(name: "Example User", nickname: "nickname", email: "user@example.com",
                            password: "foobar", password_confirmation: "foobar") }
   subject { @user }
 
   it { should respond_to(:name) }
+  it { should respond_to(:nickname) }
   it { should respond_to(:email) }
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
@@ -44,6 +45,20 @@ describe User do
 
   describe "when name is not present" do
     before { @user.name = " " }
+    it { should_not be_valid }
+  end
+  
+  describe "when nickname is not present" do
+    before { @user.nickname = " " }
+    it { should_not be_valid }
+  end
+
+  describe "when nickname is already taken" do
+    before do
+      user_with_same_nickname = @user.dup
+      user_with_same_nickname.nickname = @user.nickname.upcase
+      user_with_same_nickname.save
+    end
     it { should_not be_valid }
   end
 

@@ -29,7 +29,7 @@ describe "Authentication" do
       let(:user) { FactoryGirl.create(:user) }
       before { sign_in user }
 
-      it { should have_selector('title', text: user.name) }
+      it { should have_selector('title', text: user.nickname) }
       it { should have_link('Users', href: users_path) }
       it { should have_link('Profile', href: user_path(user)) }
       it { should have_link('Settings', href: edit_user_path(user)) }
@@ -81,7 +81,7 @@ describe "Authentication" do
           describe "when signing in again, should redirect to default page" do
             before { sign_in(user) }
 
-            it { should have_selector('title', text: user.name) }
+            it { should have_selector('title', text: user.nickname) }
           end
         end
       end
