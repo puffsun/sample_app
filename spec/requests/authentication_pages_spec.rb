@@ -8,6 +8,7 @@ describe "Authentication" do
 
     it { should have_selector('h1', text: 'Sign in') }
     it { should have_selector('title', text: 'Sign in') }
+    it { should have_link('Forgotten password?', href: new_password_reset_path) }
   end
 
   describe "signin" do

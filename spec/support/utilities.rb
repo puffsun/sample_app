@@ -9,3 +9,9 @@ def sign_in(user)
   # Sign in when not using Capybara as well
   cookies[:remember_token] = user.remember_token
 end
+
+def update_password(pass, pass_confirm)
+  fill_in "Password", with: pass
+  fill_in "Password confirmation", with: pass_confirm
+  click_button "Update password"
+end

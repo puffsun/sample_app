@@ -7,6 +7,8 @@ FactoryGirl.define do
     notify false
     password 'foobar'
     password_confirmation 'foobar'
+    password_reset_token 'qiM6TjrqAKmEMqybM4-tvg'
+    password_reset_sent_at Time.zone.now
 
     factory :admin do
       admin true
