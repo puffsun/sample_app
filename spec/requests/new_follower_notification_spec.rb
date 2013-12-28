@@ -2,6 +2,7 @@ require "spec_helper"
 
 describe UserMailer do
   let(:user) { FactoryGirl.create(:user) }
+  let(:other_user) { FactoryGirl.create(:user) }
 
   subject { page }
 
@@ -11,7 +12,7 @@ describe UserMailer do
     #click_button "Follow"
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
-    UserMailer.new_follower_notification(user).deliver
+    UserMailer.new_follower_notification(user, other_user).deliver
   end
 
   it "should send a email" do
@@ -31,6 +32,6 @@ describe UserMailer do
   end
 
   it "assigns @name" do
-    last_email.body.encoded.should match(user.nickname)
+    last_email.body.encoded.should match(other_user.nickname)
   end
 end
