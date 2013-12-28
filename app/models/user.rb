@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   has_many :reverse_relationships, foreign_key: "followed_id", class_name: "Relationship", dependent: :destroy
   # the source: :follower could be removed since rails will find follower_id in relationships table by default.
   has_many :followers, through: :reverse_relationships, source: :follower
+  has_many :replies, foreign_key: "in_reply_to_id", class_name: "Micropost"
 
   #before_save { |user| user.email = email.downcase }
   before_save { self.email.downcase! }
@@ -32,7 +33,7 @@ class User < ActiveRecord::Base
   validates :password_confirmation, presence: true
 
   def feed
-    Micropost.from_users_followed_by(self)
+    Micropost.from_users_followed_by_including_replies(self)
   end
 
   def following?(other_user)

@@ -67,6 +67,19 @@ describe "Static pages" do
         it { should have_link("0 following", href: following_user_path(user)) }
         it { should have_link("1 followers", href: followers_user_path(user)) }
       end
+
+      describe "in reply to" do
+        let(:other_user) { FactoryGirl.create(:user) }
+        before do
+          fill_in 'micropost_content', with: "@#{other_user.nickname}"
+          click_button "Post"
+          click_link "Sign out"
+          sign_in other_user
+          visit root_path
+        end
+
+        it { should have_content("@#{other_user.nickname}") }
+      end
     end
   end
 
