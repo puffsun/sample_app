@@ -5,7 +5,7 @@ This is the sample application for
 by [George Sun]
 
 * Rails 3.2.3
-* ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-darwin13.0.0]
+* Ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-darwin13.0.0]
 
 It's a complete project following the book: Ruby on Rails tutorial 2nd edition,
 with all of exercise finished. Also it add the extension features:
