@@ -35,8 +35,15 @@ describe User do
   it { should respond_to(:followers) }
   it { should respond_to(:reverse_relationships) }
   it { should respond_to(:send_password_reset) }
+  it { should respond_to(:confirm_email) }
+  it { should respond_to(:confirmed_at) }
   it { should be_valid }
   it { should_not be_admin }
+
+  describe "is certified after email been confirmed" do
+    before { @user.confirm_email }
+    it { should be_valid }
+  end
 
   describe "with admin attribute set to 'true'" do
     before { @user.toggle!(:admin) }
@@ -48,7 +55,7 @@ describe User do
     before { @user.name = " " }
     it { should_not be_valid }
   end
-  
+
   describe "when nickname is not present" do
     before { @user.nickname = " " }
     it { should_not be_valid }

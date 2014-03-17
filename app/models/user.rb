@@ -10,7 +10,7 @@
 #
 
 class User < ActiveRecord::Base
-  attr_accessible :email, :name, :nickname, :password, :password_confirmation, :notify
+  attr_accessible :email, :name, :nickname, :password, :password_confirmation, :notify, :confirmed_at
   has_secure_password
   has_many :microposts, dependent: :destroy
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
@@ -32,6 +32,11 @@ class User < ActiveRecord::Base
   validates :nickname, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+  # scope :certified, where("confirmed_at IS NOT NULL")
+
+  def confirm_email
+    update_attributes(confirmed_at: Time.zone.now)
+  end
 
   def feed
     Micropost.from_users_followed_by_including_replies(self)
@@ -69,5 +74,10 @@ class User < ActiveRecord::Base
       self[column] = SecureRandom.urlsafe_base64
     end while User.exists?(column => self[column])
   end
+
+  def is_email_confirmed
+    errors.add(:confirm, "Your email is not confirmed.") unless self.confirmed_at
+  end
+
 
 end
